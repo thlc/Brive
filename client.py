@@ -181,7 +181,11 @@ class Client:
                 url, brive_expected_error_status=403
             )
             data = feedparser.parse(xml)
-            return [user['title'] for user in data['entries']]
+	    valid_users = []
+	    for user in data['entries']:
+		if user['apps_login']['suspended'] == 'false':
+		    valid_users.append(user['title'])
+            return valid_users
         except ExpectedFailedRequestException:
             raise Exception(u'User {} is not an admin'
                             .format(self._admin.login))
